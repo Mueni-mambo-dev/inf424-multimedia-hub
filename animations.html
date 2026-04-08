@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduStream Animations & Camera</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="audio-player.html">Audio Player</a></li>
+            <li><a href="video-player.html">Video Player</a></li>
+            <li><a href="animations.html" class="active">Animations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+    <h1>Animations & Camera Filters</h1>
+</header>
+
+<main>
+    <!-- CSS Spinner -->
+    <section>
+        <h2>CSS Loading Spinner</h2>
+        <div class="css-spinner"></div>
+    </section>
+
+    <!-- Hover Card Animation -->
+    <section>
+        <h2>Hover Card Animation</h2>
+        <div class="card">
+            <h3>Interactive Card</h3>
+            <p>This card lifts and casts a shadow when hovered over, demonstrating subtle CSS transitions.</p>
+        </div>
+    </section>
+
+    <!-- SVG Draw-on-Path Animation -->
+    <section>
+        <h2>SVG Path Animation</h2>
+        <svg class="animate-path" width="300" height="150">
+            <path d="M10 80 Q 95 10 180 80 T 290 80" stroke="#3498db" stroke-width="3" fill="none"/>
+        </svg>
+    </section>
+
+    <!-- Second Animated SVG -->
+    <section>
+        <h2>Animated SVG Circle</h2>
+        <svg width="200" height="200">
+            <circle cx="100" cy="100" r="40" fill="#e74c3c">
+                <animate attributeName="r" values="40;60;40" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="fill" values="#e74c3c;#f1c40f;#e74c3c" dur="2s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+    </section>
+
+    <!-- Live Camera Filter -->
+    <section>
+        <h2>Live Camera Filter (Greyscale)</h2>
+        <video id="camera-video" autoplay playsinline width="400" style="display:none;"></video>
+        <canvas id="camera-canvas" width="400" height="300"></canvas>
+        <div style="margin-top:1rem;">
+            <button id="capture-btn">Capture Frame & Download PNG</button>
+        </div>
+        <p id="camera-error" style="color:red; margin-top:0.5rem;"></p>
+    </section>
+</main>
+
+<footer>
+    <p>Virginia Mueni | INF 424-Multimedia programming | INF/006/2022</p>
+</footer>
+
+<script>
+// ====== Live Camera with Greyscale Filter ======
+const video = document.getElementById('camera-video');
+const canvas = document.getElementById('camera-canvas');
+const ctx = canvas.getContext('2d');
+const captureBtn = document.getElementById('capture-btn');
+const cameraError = document.getElementById('camera-error');
+
+async function initCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.play();
+        requestAnimationFrame(drawFrame);
+    } catch(err) {
+        if(err.name === 'NotAllowedError') cameraError.textContent = 'Camera access denied.';
+        else if(err.name === 'NotFoundError') cameraError.textContent = 'No camera found.';
+        else cameraError.textContent = 'Error accessing camera: ' + err.message;
+    }
+}
+
+function drawFrame() {
+    if(video.readyState === video.HAVE_ENOUGH_DATA) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+        let data = imageData.data;
+        for(let i=0; i<data.length; i+=4){
+            let r = data[i], g = data[i+1], b = data[i+2];
+            let lum = 0.299*r + 0.587*g + 0.114*b;
+            data[i] = data[i+1] = data[i+2] = lum;
+        }
+        ctx.putImageData(imageData, 0, 0);
+    }
+    requestAnimationFrame(drawFrame);
+}
+
+captureBtn.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'capture.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
+initCamera();
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduStream Multimedia Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="audio-player.html">Audio Player</a></li>
+                <li><a href="video-player.html">Video Player</a></li>
+                <li><a href="animations.html">Animations</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+            </ul>
+        </nav>
+        <h1>EduStream Multimedia Hub</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Featured Image</h2>
+            <picture>
+                <source srcset="assets/images/sample.avif" type="image/avif">
+                <source srcset="assets/images/sample.webp" type="image/webp">
+                <img src="assets/images/sample.jpg" alt="EduStream Hero Image" width="600" height="400">
+            </picture>
+        </section>
+
+        <section>
+            <h2>Interactive SVG</h2>
+            <svg width="300" height="200" role="img" aria-labelledby="svgTitle svgDesc">
+                <title id="svgTitle">Educational Icon Set</title>
+                <desc id="svgDesc">An icon with book, pencil, computer, globe, and lightbulb representing learning</desc>
+
+                <!-- Book -->
+                <rect x="10" y="50" width="50" height="70" fill="#3498db"/>
+                <!-- Pencil -->
+                <polygon points="70,50 80,50 90,100 80,100" fill="#e74c3c"/>
+                <!-- Computer -->
+                <rect x="100" y="60" width="60" height="40" fill="#2ecc71"/>
+                <!-- Globe -->
+                <circle cx="200" cy="80" r="20" fill="#f1c40f"/>
+                <!-- Lightbulb -->
+                <ellipse cx="250" cy="80" rx="15" ry="25" fill="#e67e22"/>
+            </svg>
+        </section>
+    </main>
+
+    <footer>
+        <p>Virginia Mueni | INF 424-Multimedia programming | INF/006/2022</p>
+    </footer>
+</body>
+</html>

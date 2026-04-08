@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduStream Video Player</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="audio-player.html">Audio Player</a></li>
+        <li><a href="video-player.html" class="active">Video Player</a></li>
+        <li><a href="animations.html">Animations</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+    </ul>
+</nav>
+<h1>Video Player</h1>
+</header>
+
+<main>
+<section id="custom-video-player">
+    <video id="video" width="640" poster="assets/images/video-poster.jpg">
+        <source src="assets/video/sample.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="controls">
+        <button id="v-play-pause">Play</button>
+        <span id="v-current-time">0:00</span> / <span id="v-duration">0:00</span>
+        <input type="range" id="v-progress" value="0" min="0" max="100">
+        <label>Speed:
+            <select id="v-speed">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </label>
+        <button id="v-fullscreen">Fullscreen</button>
+    </div>
+
+    <div id="v-events-log">
+        <h3>Video Event Status:</h3>
+        <ul>
+            <li id="v-loadstart">Load Start: ⬜</li>
+            <li id="v-waiting">Waiting: ⬜</li>
+            <li id="v-playing">Playing: ⬜</li>
+            <li id="v-pause">Pause: ⬜</li>
+            <li id="v-ended">Ended: ⬜</li>
+            <li id="v-timeupdate">Time Update: ⬜</li>
+        </ul>
+    </div>
+
+    <section id="transcript">
+        <h3>Transcript</h3>
+        <p>Welcome to the EduStream video tutorial. This video demonstrates multimedia player features implemented in HTML5 and vanilla JS.</p>
+    </section>
+</section>
+</main>
+
+<footer>
+<p>Virginia Mueni | INF 424-Multimedia programming | INF/006/2022</p>
+</footer>
+
+<script>
+// ==== Video Player ====
+const video = document.getElementById('video');
+const vPlayPause = document.getElementById('v-play-pause');
+const vCurrentTime = document.getElementById('v-current-time');
+const vDuration = document.getElementById('v-duration');
+const vProgress = document.getElementById('v-progress');
+const vSpeed = document.getElementById('v-speed');
+const vFullscreen = document.getElementById('v-fullscreen');
+
+const vEvents = ['loadstart','waiting','playing','pause','ended','timeupdate'];
+vEvents.forEach(e => video.addEventListener(e, () => document.getElementById('v-'+e).textContent = e + ': ✅'));
+
+vPlayPause.addEventListener('click', () => {
+    if(video.paused){ video.play(); vPlayPause.textContent = 'Pause'; }
+    else { video.pause(); vPlayPause.textContent = 'Play'; }
+});
+
+video.addEventListener('loadedmetadata', () => {
+    vDuration.textContent = formatTime(video.duration);
+});
+
+video.addEventListener('timeupdate', () => {
+    vCurrentTime.textContent = formatTime(video.currentTime);
+    vProgress.value = (video.currentTime / video.duration)*100;
+});
+
+vProgress.addEventListener('input', () => {
+    video.currentTime = (vProgress.value/100)*video.duration;
+});
+
+vSpeed.addEventListener('change', () => { video.playbackRate = parseFloat(vSpeed.value); });
+
+vFullscreen.addEventListener('click', () => {
+    if(video.requestFullscreen) video.requestFullscreen();
+});
+
+function formatTime(sec){
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60).toString().padStart(2,'0');
+    return `${m}:${s}`;
+}
+</script>
+<video id="videoPlayer" width="640" height="360" poster="assets/images/video-poster.jpg" controls>
+    <source src="assets/video/tutorial.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+</body>
+</html>

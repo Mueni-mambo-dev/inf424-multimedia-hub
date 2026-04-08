@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduStream Audio Player</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="audio-player.html" class="active">Audio Player</a></li>
+            <li><a href="video-player.html">Video Player</a></li>
+            <li><a href="animations.html">Animations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+    <h1>Audio Player</h1>
+</header>
+
+<main>
+    <section id="custom-audio-player">
+        <audio id="audio" src="assets/audio/sample.mp3"></audio>
+
+        <div class="controls">
+            <button id="play-pause">Play</button>
+            <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+            <input type="range" id="progress" value="0" min="0" max="100">
+            <button id="mute">Mute</button>
+            <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+        </div>
+
+        <div id="events-log">
+            <h3>Audio Event Status:</h3>
+            <ul>
+                <li id="loadstart">Load Start: ⬜</li>
+                <li id="waiting">Waiting: ⬜</li>
+                <li id="playing">Playing: ⬜</li>
+                <li id="pause">Pause: ⬜</li>
+                <li id="ended">Ended: ⬜</li>
+                <li id="timeupdate">Time Update: ⬜</li>
+                <li id="volumechange">Volume Change: ⬜</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="tone-generator">
+        <h2>Web Audio Tone Generator</h2>
+        <div>
+            <button data-note="261.63">C4</button>
+            <button data-note="293.66">D4</button>
+            <button data-note="329.63">E4</button>
+            <button data-note="392.00">G4</button>
+        </div>
+        <label for="waveform">Waveform:</label>
+        <select id="waveform">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+        </select>
+    </section>
+</main>
+
+<footer>
+    <p>Virginia Mueni | INF 424-Multimedia programming | INF/006/2022</p>
+</footer>
+
+<script>
+// ==== Audio Player ====
+const audio = document.getElementById('audio');
+const playPauseBtn = document.getElementById('play-pause');
+const currentTime = document.getElementById('current-time');
+const duration = document.getElementById('duration');
+const progress = document.getElementById('progress');
+const muteBtn = document.getElementById('mute');
+const volume = document.getElementById('volume');
+
+// Event Indicators
+const events = ['loadstart','waiting','playing','pause','ended','timeupdate','volumechange'];
+events.forEach(e => audio.addEventListener(e, () => document.getElementById(e).textContent = e + ': ✅'));
+
+playPauseBtn.addEventListener('click', () => {
+    if(audio.paused) { audio.play(); playPauseBtn.textContent = 'Pause'; }
+    else { audio.pause(); playPauseBtn.textContent = 'Play'; }
+});
+
+audio.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener('timeupdate', () => {
+    currentTime.textContent = formatTime(audio.currentTime);
+    progress.value = (audio.currentTime / audio.duration) * 100;
+});
+
+progress.addEventListener('input', () => {
+    audio.currentTime = (progress.value/100)*audio.duration;
+});
+
+muteBtn.addEventListener('click', () => {
+    audio.muted = !audio.muted;
+    muteBtn.textContent = audio.muted ? 'Unmute' : 'Mute';
+});
+
+volume.addEventListener('input', () => {
+    audio.volume = volume.value;
+});
+
+// Keyboard Shortcuts: Space (play/pause), M (mute), Arrow keys (seek)
+document.addEventListener('keydown', e => {
+    if(e.code === 'Space') { e.preventDefault(); playPauseBtn.click(); }
+    if(e.code === 'KeyM') muteBtn.click();
+    if(e.code === 'ArrowRight') { audio.currentTime += 5; }
+    if(e.code === 'ArrowLeft') { audio.currentTime -= 5; }
+});
+
+function formatTime(sec) {
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60).toString().padStart(2,'0');
+    return `${m}:${s}`;
+}
+
+// ==== Web Audio API Tone Generator ====
+const AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const waveformSelect = document.getElementById('waveform');
+
+document.querySelectorAll('#tone-generator button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const osc = AudioCtx.createOscillator();
+        const gainNode = AudioCtx.createGain();
+        osc.type = waveformSelect.value;
+        osc.frequency.value = parseFloat(btn.dataset.note);
+        osc.connect(gainNode).connect(AudioCtx.destination);
+
+        // Smooth envelope
+        gainNode.gain.setValueAtTime(0, AudioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.5, AudioCtx.currentTime+0.01);
+        gainNode.gain.linearRampToValueAtTime(0, AudioCtx.currentTime+1);
+
+        osc.start();
+        osc.stop(AudioCtx.currentTime+1);
+    });
+});
+</script>
+<!-- Example optional thumbnail for audio -->
+<img src="assets/images/audio-icon.png" alt="Audio Player Icon" class="audio-thumb">
+</body>
+</html>

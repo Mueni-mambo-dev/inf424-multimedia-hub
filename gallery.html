@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduStream Media Gallery</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="audio-player.html">Audio Player</a></li>
+            <li><a href="video-player.html">Video Player</a></li>
+            <li><a href="animations.html">Animations</a></li>
+            <li><a href="gallery.html" class="active">Gallery</a></li>
+        </ul>
+    </nav>
+    <h1>EduStream Media Gallery</h1>
+</header>
+
+<main>
+    <section>
+        <h2>Search Media</h2>
+        <input type="text" id="search-input" class="search-input" placeholder="Search media by title...">
+    </section>
+
+    <section class="gallery-grid" id="gallery-container">
+        <!-- Media cards will be rendered here dynamically -->
+    </section>
+</main>
+
+<footer>
+    <p>Virginia Mueni | INF 424-Multimedia programming | INF/006/2022</p>
+</footer>
+
+<script>
+// ===== Media Gallery Data =====
+const mediaItems = [
+    {title: "Relaxing Audio", type: "audio", src: "assets/audio/sample.mp3", description: "A calming background audio track."},
+    {title: "Tutorial Video", type: "video", src: "assets/video/sample.mp4", description: "Introductory multimedia tutorial."},
+    {title: "CSS Spinner Demo", type: "animation", src: "assets/images/spinner-demo.png", description: "Static capture of CSS spinner."},
+    {title: "Hover Card Example", type: "animation", src: "assets/images/card-demo.png", description: "Hover card animation preview."},
+    {title: "SVG Path Animation", type: "animation", src: "assets/images/svg-path.png", description: "Draw-on-path SVG animation snapshot."},
+    {title: "Animated Circle SVG", type: "animation", src: "assets/images/svg-circle.png", description: "Color-changing animated SVG circle."},
+    {title: "Camera Capture", type: "image", src: "assets/images/camera-capture.png", description: "Sample capture from live camera filter."},
+    {title: "Music Notes", type: "audio", src: "assets/audio/tone.mp3", description: "Tone generator musical note demo."}
+];
+
+// ===== Pure Function to Render a Media Card =====
+function renderMediaCard(item) {
+    const card = document.createElement('div');
+    card.className = 'gallery-card';
+    let mediaElement = '';
+    if(item.type === 'audio') {
+        mediaElement = `<audio controls src="${item.src}"></audio>`;
+    } else if(item.type === 'video') {
+        mediaElement = `<video controls width="100%" src="${item.src}"></video>`;
+    } else {
+        mediaElement = `<img src="${item.src}" alt="${item.title}">`;
+    }
+
+    card.innerHTML = `
+        <h3>${item.title}</h3>
+        ${mediaElement}
+        <p>${item.description}</p>
+    `;
+    return card;
+}
+
+// ===== Render All Media Cards =====
+const galleryContainer = document.getElementById('gallery-container');
+
+function displayGallery(items) {
+    galleryContainer.innerHTML = '';
+    items.map(renderMediaCard).forEach(card => galleryContainer.appendChild(card));
+}
+
+// Initial render
+displayGallery(mediaItems);
+
+// ===== Live Search Filter =====
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('input', e => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredItems = mediaItems.filter(item => item.title.toLowerCase().includes(searchTerm));
+    displayGallery(filteredItems);
+});
+</script>
+</body>
+</html>
