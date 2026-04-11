@@ -1,0 +1,28 @@
+CREDITS
+
+Project Title:  Learning Hub Multimedia Website
+
+Developer:
+VIRGINIAH MUENI
+
+Description:
+This project is a multimedia learning hub developed using HTML5, CSS, and JavaScript.
+
+Resources Used:
+
+Images:
+- Image 1: https://pexels.com/image1 
+- Image 2: https://unplash.com/image2 
+
+Audio:
+- Background Music: https://freesounds.com/audio1
+
+Video:
+- Tutorial Video: https://pexels.com/video1
+
+Tools and Software:
+- GitHub for version control and hosting
+- Visual Studio Code for development
+
+Acknowledgements:
+Special thanks to my lecturer and classmates for their support.
